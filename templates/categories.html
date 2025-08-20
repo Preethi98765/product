@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Categories</title>
+</head>
+<body>
+    <h1>Categories</h1>
+    <form method="post">
+        <label>Category Name:</label>
+        <input type="text" name="category_name" required>
+        <button type="submit">Add Category</button>
+    </form>
+
+    <h2>Category List</h2>
+    <ul>
+        {% for cat in categories %}
+            <li>{{ cat }}</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
