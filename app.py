@@ -133,4 +133,29 @@ def set_product_values(product_id: int):
         return jsonify({"error": "product not found"}), 404
 
     data = request.get_json(force=True)
-    values = data.get("v
+    values = data.get("values")  # {"ram": 8, "os": "Android"}
+    if not isinstance(values, dict) or not values:
+        return jsonify({"error": "values must be a non-empty object"}), 400
+
+    # Validate against category attributes
+    cat_attrs = [a for a in attributes if a["category_id"] == prod["category_id"]]
+    by_code = {a["code"]: a for a in cat_attrs}
+
+    for code, val in values.items():
+        if code not in by_code:
+            return jsonify({"error": f"attribute '{code}' not defined for this category"}), 400
+        if not _validate_type(by_code[code], val):
+            return jsonify({"error": f"invalid value for '{code}' (type {by_code[code]['data_type']})"}), 400
+
+    # Save
+    product_values[product_id].update(values)
+    return jsonify({"message": "Values saved", "values": product_values[product_id]})
+
+@app.route("/products/<int:product_id>/values", methods=["GET"])
+def get_product_values(product_id: int):
+    if not find_product(product_id):
+        return jsonify({"error": "product not found"}), 404
+    return jsonify(product_values.get(product_id, {}))
+
+if __name__ == "__main__":
+    app.run(debug=True)
