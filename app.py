@@ -47,6 +47,10 @@ def manage_products():
                            categories=categories, 
                            attributes=attributes, 
                            products=products)
+    @app.route('/catalog')
+def view_catalog():
+    return render_template("catalog.html", products=products)
+
 
 
 
